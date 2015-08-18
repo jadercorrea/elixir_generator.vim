@@ -1,7 +1,7 @@
 ##Elixir Generator
 
-This plugin adds a command to easely add more modules to your `Mix` projetc.
-Just like Mix creates a lib and a test file for you to start coding.
+This plugin adds a command to easely add more modules to your `Mix` project.
+Just like Mix, it creates a lib and a test file for you to start coding.
 
 ####Self-generate modules and unit tests
 
@@ -9,27 +9,52 @@ Hit `:EX` and vim will prompt you to include the path of your new module:
 
 ```Type the path (e.g store/cart/item):```
 
-if you type `store/special_cart`, it will generate two files:
+if you type `shopping/cart`, it will generate two files:
 
-* `lib/store/special_cart.ex`
-
-```
-defmodule Store.SpecialCart do
-
-end
-```
-
-* `test/store/special_cart_test.exs`
+* `lib/shopping/cart.ex`
 
 ```
-Code.require_file "../test_helper.exs", __DIR__
+defmodule Store do
+  defmodule Cart do
 
-defmodule Store.SpecialCartTest do
-  use ExUnit.Case, async: true
-  require Store.SpecialCart, as: C
+    def some_method(opts \\ [])
 
-  test "some method" do
-    assert C.some_method == true
+    def some_method(opts) when opts == [] do
+      {:ok}
+    end
+
+    def some_method(opts)
+      {:ok, [opts]}
+    end
+
+    defp private_method do
+      {:ok}
+    end
   end
 end
 ```
+
+* `test/shopping/cart_test.exs`
+
+```
+defmodule Shopping.CartTest do
+  use ExUnit.Case, async: true
+  require Shopping.Cart, as: C
+
+  test "some method without param" do
+    assert C.some_method == {:ok}
+  end
+
+  test "some method with param" do
+    assert C.some_method(1) == {:ok, [1]}
+  end
+end
+```
+
+You may wanna use [smartest.vim](https://github.com/jadercorrea/smartest.vim)
+to run your test with a key mapping.
+
+This project is base on [kurko's autocoder](https://github.com/kurko/autocoder.vim).
+
+#### License
+MIT. Do what you want with it, but please consider contributing back :)
