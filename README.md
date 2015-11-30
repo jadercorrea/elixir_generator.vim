@@ -1,6 +1,6 @@
 ##Elixir Generator
 
-This plugin adds a command to easely add more modules to your `Mix` project.
+This plugin adds a command to easily add more modules to your `Mix` project.
 Just like Mix, it creates a lib and a test file for you to start coding.
 
 ####Self-generate modules and unit tests
@@ -13,7 +13,7 @@ if you type `shopping/cart`, it will generate two files:
 
 * `lib/shopping/cart.ex`
 
-```
+```elixir
 defmodule Store do
   defmodule Cart do
 
@@ -36,7 +36,7 @@ end
 
 * `test/shopping/cart_test.exs`
 
-```
+```elixir
 defmodule Shopping.CartTest do
   use ExUnit.Case, async: true
   require Shopping.Cart, as: C
