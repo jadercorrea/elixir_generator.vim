@@ -6,33 +6,31 @@ endfunction
 function! ModuleFileString(...)
   let l:module_names = a:1
   let l:code = ""
+  let l:camel_cased_module_names = []
 
-  let current_index = 0
   for i in l:module_names
-    let l:module_name = substitute(Strip(i), '\%(^\|_\)\(.\)', '\u\1', 'g')
-    let l:module_namespace = "defmodule"
-    let l:code = l:code . l:module_namespace . " " . l:module_name . " do\n"
-    let current_index += 1
+    let l:tmp = substitute(Strip(i), '\%(^\|_\)\(.\)', '\u\1', 'g')
+    call add(l:camel_cased_module_names, l:tmp)
+    echo l:camel_cased_module_names
+    let l:module_chain = join(l:camel_cased_module_names, ".")
   endfor
 
+  let l:code = l:code . "defmodule " . module_chain . " do\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "def some_method(opts \\\\ [])\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "def some_method(opts) when opts == [] do\n"
-  let l:code = l:code . "{:ok}\n"
+  let l:code = l:code . "  {:ok}\n"
   let l:code = l:code . "end\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "def some_method(opts) do\n"
-  let l:code = l:code . "{:ok, [opts]}\n"
+  let l:code = l:code . "  {:ok, [opts]}\n"
   let l:code = l:code . "end\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "defp private_method do\n"
-  let l:code = l:code . "{:ok}\n"
+  let l:code = l:code . "  {:ok}\n"
+  let l:code = l:code . "end\n"
   let l:code = l:code . "end"
-
-  for i in l:module_names
-    let l:code = l:code . "\nend"
-  endfor
 
   return l:code
 endfunction
@@ -42,7 +40,6 @@ function! TestFileString(...)
   let l:module_names = a:1
   let l:code = ""
   let l:camel_cased_module_names = []
-  let l:alias = toupper(module_names[-1][0])
 
   for i in l:module_names
     let l:tmp = substitute(Strip(i), '\%(^\|_\)\(.\)', '\u\1', 'g')
@@ -51,18 +48,19 @@ function! TestFileString(...)
     let l:module_chain = join(l:camel_cased_module_names, ".")
   endfor
 
+  let l:alias = camel_cased_module_names[-1]
   let l:code = l:code . "defmodule " . module_chain . "Test do\n"
   let l:code = l:code . "use ExUnit.Case, async: true\n"
   let l:code = l:code . "require " . module_chain . ", as: " . alias . "\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "test \"some method without param\" do\n"
-  let l:code = l:code . "assert " . alias .".some_method == {:ok}\n"
+  let l:code = l:code . "  assert " . alias .".some_method == {:ok}\n"
   let l:code = l:code . "end\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "test \"some method with param\" do\n"
-  let l:code = l:code . "assert " . alias .".some_method(1) == {:ok, [1]}"
-  let l:code = l:code . "\nend"
-  let l:code = l:code . "\nend"
+  let l:code = l:code . "  assert " . alias .".some_method(1) == {:ok, [1]}\n"
+  let l:code = l:code . "end\n"
+  let l:code = l:code . "end"
 
   return l:code
 endfunction
@@ -76,7 +74,7 @@ function! ElixirGeneratorCreateModuleFile()
 
   " CREATES THE PRODUCTION CODE
 
-  " We're only creating these classes inside lib/
+  " We're only creating these modules inside lib/
   exec ":cd ./lib"
 
   " Iterates over each namespace. If store/cart/item was entered, iterates

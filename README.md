@@ -1,9 +1,9 @@
-##Elixir Generator
+## Elixir Generator
 
 This plugin adds a command to easily add more modules to your `Mix` project.
 Just like Mix, it creates a lib and a test file for you to start coding.
 
-####Self-generate modules and unit tests
+#### Self-generate modules and unit tests
 
 Hit `:EX` and vim will prompt you to include the path of your new module:
 
@@ -14,22 +14,19 @@ if you type `shopping/cart`, it will generate two files:
 * `lib/shopping/cart.ex`
 
 ```elixir
-defmodule Store do
-  defmodule Cart do
+defmodule Store.Cart do
+  def some_method(opts \\ [])
 
-    def some_method(opts \\ [])
+  def some_method(opts) when opts == [] do
+    {:ok}
+  end
 
-    def some_method(opts) when opts == [] do
-      {:ok}
-    end
+  def some_method(opts)
+    {:ok, [opts]}
+  end
 
-    def some_method(opts)
-      {:ok, [opts]}
-    end
-
-    defp private_method do
-      {:ok}
-    end
+  defp private_method do
+    {:ok}
   end
 end
 ```
@@ -39,14 +36,14 @@ end
 ```elixir
 defmodule Shopping.CartTest do
   use ExUnit.Case, async: true
-  require Shopping.Cart, as: C
+  require Shopping.Cart, as: Cart
 
   test "some method without param" do
-    assert C.some_method == {:ok}
+    assert Cart.some_method == {:ok}
   end
 
   test "some method with param" do
-    assert C.some_method(1) == {:ok, [1]}
+    assert Cart.some_method(1) == {:ok, [1]}
   end
 end
 ```
