@@ -51,5 +51,5 @@ end
 You may wanna use [vim.test](https://github.com/vim-test/vim-test)
 to run your test with a key mapping. If offers a large amount supported languages.
 
-#### License
-MIT. Do what you want with it, but please consider contributing back :)
+#### Contributing
+Please consider contributing back.
