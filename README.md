@@ -21,7 +21,7 @@ defmodule Store.Cart do
     {:ok}
   end
 
-  def some_method(opts)
+  def some_method(opts) do
     {:ok, [opts]}
   end
 
@@ -38,11 +38,11 @@ defmodule Shopping.CartTest do
   use ExUnit.Case, async: true
   require Shopping.Cart, as: Cart
 
-  test "some method without param" do
+  test "some_method/0" do
     assert Cart.some_method == {:ok}
   end
 
-  test "some method with param" do
+  test "some_method/1" do
     assert Cart.some_method(1) == {:ok, [1]}
   end
 end
@@ -50,8 +50,6 @@ end
 
 You may wanna use [smartest.vim](https://github.com/jadercorrea/smartest.vim)
 to run your test with a key mapping.
-
-This project is base on [kurko's autocoder](https://github.com/kurko/autocoder.vim).
 
 #### License
 MIT. Do what you want with it, but please consider contributing back :)
