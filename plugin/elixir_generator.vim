@@ -66,8 +66,8 @@ function! TestFileString(...)
 endfunction
 
 function! ElixirGeneratorCreateModuleFile()
-  let l:module_name    = input('Type the path (e.g store/cart/item): ')
-  let l:current_dir   = getcwd()
+  let l:module_name = input('Type the path (e.g store/cart/item): ')
+  let l:current_dir = getcwd()
   let current_index = 0
 
   let l:module_names = split(module_name, "/")
