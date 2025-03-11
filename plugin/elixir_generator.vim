@@ -121,6 +121,11 @@ function! ElixirGeneratorCreateModuleFile()
       execute ":silent !touch " . l:filename . ".ex"
       " Opens it
       execute ":silent e " . l:filename . ".ex"
+
+      " Disable auto comment in the current buffer
+      execute "setlocal formatoptions-=c"
+      execute "setlocal formatoptions-=r"
+
       " Populates it with the boilerplate code
       let l:module_code = ModuleFileString(l:module_names)
       execute ":silent normal cc" . l:module_code . "\<Esc>"
