@@ -15,6 +15,19 @@ if you type `shopping/cart`, it will generate two files:
 
 ```elixir
 defmodule Store.Cart do
+  @moduledoc """
+  Some Module main doc..
+  """
+
+  @doc """
+  Some method behavior.
+
+  ## Examples
+
+    iex> Store.Cart.some_methot([])
+    {:ok}
+
+  """
   def some_method(opts \\ [])
 
   def some_method(opts) when opts == [] do
@@ -35,15 +48,19 @@ end
 
 ```elixir
 defmodule Shopping.CartTest do
-  use ExUnit.Case, async: true
-  require Shopping.Cart, as: Cart
+  use Store.DataCase
+  alias Shopping.Cart
 
-  test "some_method/0" do
-    assert Cart.some_method == {:ok}
+  describe "some_method/0" do
+    test "some method without param" do"
+      assert Cart.some_method == {:ok}
+    end
   end
 
-  test "some_method/1" do
-    assert Cart.some_method(1) == {:ok, [1]}
+  describe "some_method/1" do
+    test "some method with param" do"
+      assert Cart.some_method(1) == {:ok, [1]}
+    end
   end
 end
 ```
