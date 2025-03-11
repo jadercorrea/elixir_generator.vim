@@ -25,7 +25,7 @@ function! ModuleFileString(...)
   let l:code = l:code . "\n"
   let l:code = l:code . "  ## Examples\n"
   let l:code = l:code . "\n"
-  let l:code = l:code . "  iex> module_names.some_metod([])\n"
+  let l:code = l:code . "  iex> " . module_chain . ".some_method([])\n"
   let l:code = l:code . "  {:ok}\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "  \"\"\"\n"
