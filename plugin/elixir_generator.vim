@@ -122,13 +122,20 @@ function! ElixirGeneratorCreateModuleFile()
       " Opens it
       execute ":silent e " . l:filename . ".ex"
 
-      " Disable auto comment in the current buffer
+      " Disables auto-comment in the current buffer
       execute "setlocal formatoptions-=c"
       execute "setlocal formatoptions-=r"
+
+      " Actives paste mode to avoid autoindent e reindent
+      execute "setlocal paste"
 
       " Populates it with the boilerplate code
       let l:module_code = ModuleFileString(l:module_names)
       execute ":silent normal cc" . l:module_code . "\<Esc>"
+
+      " Deactivates paste mode
+      execute "setlocal nopaste"
+
       " Saves the current file
       execute ":w"
     endif
