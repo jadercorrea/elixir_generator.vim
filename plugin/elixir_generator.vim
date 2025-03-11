@@ -67,7 +67,7 @@ function! TestFileString(...)
   let l:code = l:code . "  alias " . module_chain . "\n"
   let l:code = l:code . "\n"
   let l:code = l:code . "  setup do\n"
-  let l:code = l:code . "    {:ok}"
+  let l:code = l:code . "    :ok"
   let l:code = l:code . "\n"
   let l:code = l:code . "  end\n"
   let l:code = l:code . "\n"
