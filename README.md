@@ -24,7 +24,7 @@ defmodule Store.Cart do
 
   ## Examples
 
-    iex> Store.Cart.some_methot([])
+    iex> Store.Cart.some_method([])
     {:ok}
 
   """
@@ -50,6 +50,10 @@ end
 defmodule Shopping.CartTest do
   use Store.DataCase
   alias Shopping.Cart
+
+  setup do
+    :ok
+  end
 
   describe "some_method/0" do
     test "some method without param" do"
