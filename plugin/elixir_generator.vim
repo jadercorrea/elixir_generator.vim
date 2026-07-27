@@ -11,7 +11,6 @@ function! ModuleFileString(...)
   for i in l:module_names
     let l:tmp = substitute(Strip(i), '\%(^\|_\)\(.\)', '\u\1', 'g')
     call add(l:camel_cased_module_names, l:tmp)
-    echo l:camel_cased_module_names
     let l:module_chain = join(l:camel_cased_module_names, ".")
   endfor
 
@@ -56,30 +55,17 @@ function! TestFileString(...)
   for i in l:module_names
     let l:tmp = substitute(Strip(i), '\%(^\|_\)\(.\)', '\u\1', 'g')
     call add(l:camel_cased_module_names, l:tmp)
-    echo l:camel_cased_module_names
     let l:module_chain = join(l:camel_cased_module_names, ".")
   endfor
 
   let l:alias = camel_cased_module_names[-1]
-  let l:app_name = camel_cased_module_names[0]
   let l:code = l:code . "defmodule " . module_chain . "Test do\n"
-  let l:code = l:code . "  use " . app_name . ".DataCase\n"
+  let l:code = l:code . "  use ExUnit.Case\n"
   let l:code = l:code . "  alias " . module_chain . "\n"
   let l:code = l:code . "\n"
-  let l:code = l:code . "  setup do\n"
-  let l:code = l:code . "    :ok"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  end\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  describe \"some_method/0\" do\n"
-  let l:code = l:code . "    test \"some method without param\" do\n"
-  let l:code = l:code . "      assert " . alias .".some_method == {:ok}\n"
-  let l:code = l:code . "    end\n"
-  let l:code = l:code . "  end\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  describe \"some_method/1\" do\n"
-  let l:code = l:code . "    test \"some method with param\" do\n"
-  let l:code = l:code . "      assert " . alias .".some_method(1) == {:ok, [1]}\n"
+  let l:code = l:code . "  describe \"" . l:alias . "\" do\n"
+  let l:code = l:code . "    test \"should work\" do\n"
+  let l:code = l:code . "      assert " . l:alias . ".some_method() == :ok\n"
   let l:code = l:code . "    end\n"
   let l:code = l:code . "  end\n"
   let l:code = l:code . "end"
