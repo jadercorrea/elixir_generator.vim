@@ -2,73 +2,46 @@ function! Strip(input_string)
   return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
 endfunction
 
-" Generates the code for a given module
+" Generates the module code
 function! ModuleFileString(...)
   let l:module_names = a:1
-  let l:code = ""
   let l:camel_cased_module_names = []
 
   for i in l:module_names
     let l:tmp = substitute(Strip(i), '\%(^\|_\)\(.\)', '\u\1', 'g')
     call add(l:camel_cased_module_names, l:tmp)
-    let l:module_chain = join(l:camel_cased_module_names, ".")
   endfor
 
-  let l:code = l:code . "defmodule " . module_chain . " do\n"
-  let l:code = l:code . "  @moduledoc \"\"\"\n"
-  let l:code = l:code . "  Some Module main doc.\n"
-  let l:code = l:code . "  \"\"\"\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  @doc \"\"\"\n"
-  let l:code = l:code . "  Some method behavior.\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  ## Examples\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  iex> " . module_chain . ".some_method([])\n"
-  let l:code = l:code . "  {:ok}\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  \"\"\"\n"
-  let l:code = l:code . "  def some_method(opts \\\\ [])\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  def some_method(opts) when opts == [] do\n"
-  let l:code = l:code . "    {:ok}\n"
-  let l:code = l:code . "  end\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  def some_method(opts) do\n"
-  let l:code = l:code . "    {:ok, [opts]}\n"
-  let l:code = l:code . "  end\n"
-  let l:code = l:code . "\n"
-  let l:code = l:code . "  defp private_method do\n"
-  let l:code = l:code . "    {:ok}\n"
-  let l:code = l:code . "  end\n"
-  let l:code = l:code . "end"
+  let l:module_chain = join(l:camel_cased_module_names, ".")
+  let l:code = "defmodule " . l:module_chain . " do\n"
+  let l:code = l:code . "  @moduledoc false\n"
+  let l:code = l:code . "end\n"
 
   return l:code
 endfunction
 
-" Generates the test for a given module
+" Generates the test code
 function! TestFileString(...)
   let l:module_names = a:1
-  let l:code = ""
   let l:camel_cased_module_names = []
 
   for i in l:module_names
     let l:tmp = substitute(Strip(i), '\%(^\|_\)\(.\)', '\u\1', 'g')
     call add(l:camel_cased_module_names, l:tmp)
-    let l:module_chain = join(l:camel_cased_module_names, ".")
   endfor
 
+  let l:module_chain = join(l:camel_cased_module_names, ".")
   let l:alias = camel_cased_module_names[-1]
-  let l:code = l:code . "defmodule " . module_chain . "Test do\n"
+  let l:code = "defmodule " . l:module_chain . "Test do\n"
   let l:code = l:code . "  use ExUnit.Case\n"
-  let l:code = l:code . "  alias " . module_chain . "\n"
+  let l:code = l:code . "  alias " . l:module_chain . "\n"
   let l:code = l:code . "\n"
-  let l:code = l:code . "  describe \"" . l:alias . "\" do\n"
-  let l:code = l:code . "    test \"should work\" do\n"
-  let l:code = l:code . "      assert " . l:alias . ".some_method() == :ok\n"
+  let l:code = l:code . "  describe \"solution/2\" do\n"
+  let l:code = l:code . "    test \"returns indices of two numbers that add up to target\" do\n"
+  let l:code = l:code . "      assert " . l:alias . ".solution([1, 2, 3], 5) == [1, 2]\n"
   let l:code = l:code . "    end\n"
   let l:code = l:code . "  end\n"
-  let l:code = l:code . "end"
+  let l:code = l:code . "end\n"
 
   return l:code
 endfunction
@@ -81,48 +54,21 @@ function! ElixirGeneratorCreateModuleFile()
   let l:module_names = split(module_name, "/")
 
   " CREATES THE PRODUCTION CODE
-
-  " We're only creating these modules inside lib/
   exec ":cd ./lib"
 
-  " Iterates over each namespace. If store/cart/item was entered, iterates
-  " on store, cart and item, creating the subdirectories recursively if they
-  " don't already exist.
   for i in l:module_names
     let l:filename = Strip(tolower(i))
 
-    " If the current name is supposed to be a directory (e.g cart in
-    " store/cart/item is supposed to be a file.
     if current_index != (len(l:module_names)-1)
-      " creates directories recursively
       if !isdirectory(filename)
         exec ":!mkdir " . l:filename
       endif
       exec ":cd ./"   . l:filename
-
-    " If the current name is supposed to be a file (e.g item is supposed
-    " to be a file in store/cart/item)
     else
-      " Creates the class file
-      execute ":silent !touch " . l:filename . ".ex"
-      " Opens it
       execute ":silent e " . l:filename . ".ex"
-
-      " Disables auto-comment in the current buffer
-      execute "setlocal formatoptions-=c"
-      execute "setlocal formatoptions-=r"
-
-      " Actives paste mode to avoid autoindent e reindent
-      execute "setlocal paste"
-
-      " Populates it with the boilerplate code
       let l:module_code = ModuleFileString(l:module_names)
-      execute ":silent normal cc" . l:module_code . "\<Esc>"
-
-      " Deactivates paste mode
-      execute "setlocal nopaste"
-
-      " Saves the current file
+      execute ":silent %delete"
+      call setline(1, split(l:module_code, "\n"))
       execute ":w"
     endif
     let current_index += 1
@@ -131,46 +77,27 @@ function! ElixirGeneratorCreateModuleFile()
   exec ":cd " . l:current_dir
 
   " CREATES THE TEST CODE
-
-  " We're only creating these classes inside spec/lib/
   if isdirectory("test/lib")
     exec ":cd ./test/lib"
   else
     exec ":cd ./test"
   endif
 
-  " Iterates over each namespace. If store/cart/item was entered, iterates
-  " on store, cart and item, creating the subdirectories recursively if they
-  " don't already exist.
   let current_index = 0
   for i in l:module_names
     let l:filename = Strip(tolower(i))
 
-    " If the current name is supposed to be a directory (e.g cart in
-    " store/cart/item is supposed to be a file.
     if current_index != (len(l:module_names)-1)
-      " creates directories recursively
       if !isdirectory(filename)
         exec ":!mkdir " . l:filename
       endif
       exec ":cd ./"   . l:filename
-
-    " If the current name is supposed to be a file (e.g item is supposed
-    " to be a file in store/cart/item)
     else
-      " Creates the class file
-      execute ":silent !touch " . l:filename . "_test.exs"
-      " Opens it in a horizontal split
-      execute ":vsplit"
-      execute ":wincmd l"
-      execute ":e " . l:filename . "_test.exs"
-
-      " Populates it with the boilerplate code
+      execute ":silent e " . l:filename . "_test.exs"
       let l:module_code = TestFileString(l:module_names)
-      execute ":silent normal cc" . l:module_code . "\<Esc>"
-      " Saves the current file
+      execute ":silent %delete"
+      call setline(1, split(l:module_code, "\n"))
       execute ":w"
-      execute ":wincmd h"
     endif
     let current_index += 1
   endfor
